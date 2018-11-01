@@ -1,0 +1,263 @@
+<html>
+	<head>
+		<title>Shock tube calculator</title>
+		<script>
+			function get_shockspeed(up,a1,g)
+			{
+				var term1,w;
+
+				term1 = Math.sqrt( (g+1.0)*(g+1.0)*up*up*0.0625 + a1*a1 );
+    				w = (g+1)*up*0.25 + term1;
+				return w;
+			}
+
+			function get_p1byp4(w,up,a1,a4,g)
+			{
+				var term1,term2;
+
+    				term1 = ( 1 - 0.5*(g-1)*(up/a4));
+    				term2 = (g+1)*a1*a1/(2*g*w*w-(g-1)*a1*a1)*Math.pow(term1,2*g/(g-1));
+    				return term2;
+			}
+			function savefile(form1,form2)
+		        {
+
+				var alldata;
+				var x1,a3,x2,Ms,w;
+				var p2,d2,T2,p3,d3,T3;
+				var xc,x3,distance,xmin,xmax;
+				var u,T,p,d;
+				
+				var p4,d4,p1,d1,g,R,up,T1,T4;
+				var t,a1,a4,npoints;
+
+				var flag;
+				
+				npoints=1000;
+				
+				p4=parseFloat(form1.pL.value);
+				d4=parseFloat(form1.dL.value);
+				p1=parseFloat(form1.pR.value);
+				d1=parseFloat(form1.dR.value);
+
+				R=parseFloat(form1.R.value);
+				g=parseFloat(form1.gm.value);
+				t=parseFloat(form1.tf.value);
+				up=parseFloat(form2.contspeed.value);
+				
+				T1 = p1/R/d1;
+				T4 = p4/R/d4;
+
+				a1 = Math.sqrt(g*R*T1);
+				a4 = Math.sqrt(g*R*T4);
+
+    				alldata="position\tpressure\tdensity\ttemperature\txvelocity\n";
+
+    				x1 = -a4*t;
+    				a3 = a4-0.5*(g-1)*up;
+    
+    				x2 = (up-a3)*t;
+    				w = get_shockspeed(up,a1,g);
+    				Ms = w/a1;
+
+    				p2 = p1*(1 + (2*g/(g+1))*(Ms*Ms-1));
+    				d2 = d1*(g+1)*Ms*Ms/(2+(g-1)*Ms*Ms);
+    				T2 = p2/R/d2;
+
+    				p3 = p2;
+    				T3 = T4*(1-0.5*(g-1)*(up/a4))*(1-0.5*(g-1)*(up/a4));
+    				d3 = p3/R/T3;
+
+    				xc = up*t; 
+    				x3 = w*t;  
+
+    				distance = x3-x1;
+
+    				xmin = x1-0.5*distance;
+    				xmax = x3 + 0.5*distance;
+
+				dx = (xmax-xmin)/(npoints-1);
+
+				//docmument.write("saved");
+
+				for(var i=0;i<npoints;i++)
+				{
+        				x = xmin+i*dx;
+
+					if(x>x3)
+					{
+						alldata=alldata+x.toString()+"\t"+p1.toString()+"\t"+d1.toString()+"\t"
+						+T1.toString()+"\t0.0\n";
+        				}
+					else if(x>xc && x<=x3)
+					{
+						alldata=alldata+x.toString()+"\t"+p2.toString()+"\t"+d2.toString()+"\t"+
+						T2.toString()+"\t"+up.toString()+"\n";
+        				}
+        				else if(x>x2 && x<=xc)
+					{	
+						alldata=alldata+x.toString()+"\t"+p3.toString()+"\t"+
+						d3.toString()+"\t"+T3.toString()+"\t"+up.toString()+"\n";
+        				}
+        				else if(x>x1 && x<=x2)
+					{
+            					u = up*(x-x1)/(x2-x1);
+            					T = T4*(1-0.5*(g-1)*(u/a4))*(1-0.5*(g-1)*(u/a4));
+            					p = p4 * Math.pow((1-0.5*(g-1)*(u/a4)),2*g/(g-1));
+            					d = p/R/T;
+						alldata=alldata+x.toString()+"\t"+p.toString()+"\t"+d.toString()+
+						"\t"+T.toString()+"\t"+u.toString()+"\n";
+					}
+        				else
+					{
+						alldata=alldata+x.toString()+"\t"+p4.toString()+"\t"+d4.toString()+"\t"+
+						T4.toString()+"\t0.0\n";
+					}
+				}
+
+					//document.write("<p>"+alldata+"</p>")
+            				window.open('data:text/csv;charset=utf-8,' + escape(alldata));
+			}	
+			function calcsoln(form1,form2)
+			{
+				var a4,a1,upmax,upmin,guess1,guess2;
+				var p4,r4,p1,r1,g,R;
+				var t;
+				var T1,T4;
+				var npoints;
+				var count,tol,err,w1,w2,a3;
+				var y1,y2,up,w,x;
+				var head,tail,ct,sh;
+				var tm1;
+
+				npoints=1000;
+
+				p4=parseFloat(form1.pL.value);
+				r4=parseFloat(form1.dL.value);
+				p1=parseFloat(form1.pR.value);
+				r1=parseFloat(form1.dR.value);
+
+				R=parseFloat(form1.R.value);
+				g=parseFloat(form1.gm.value);
+				t=parseFloat(form1.tf.value);
+
+				T1 = p1/R/r1;
+				T4 = p4/R/r4;
+
+				a1 = Math.sqrt(g*R*T1);
+				a4 = Math.sqrt(g*R*T4);
+				
+
+				upmax=2*a4/(g-1);
+				upmin=0.0;
+
+				guess1=0.95*(upmax+upmin);
+				guess2=0.2*(upmax+upmin);
+
+				count=0;
+				tol=0.001;
+				err=1.0;
+				
+				while(err>tol && count<100)
+				{
+					w1=get_shockspeed(guess1,a1,g);
+					w2=get_shockspeed(guess2,a1,g);
+					
+					y1=get_p1byp4(w1,guess1,a1,a4,g);
+					y2=get_p1byp4(w2,guess2,a1,a4,g);
+
+					err=Math.abs(y2-(p1/p4));
+
+					x=guess1 + ((p1/p4)-y1)*(guess2-guess1)/(y2-y1);
+
+					guess1=guess2;
+					guess2=x;
+					count=count+1;
+				}
+				
+
+				up = guess2;
+				w = get_shockspeed(up,a1,g);
+				a3 = a4-0.5*(g-1)*up;
+
+				head=-a4*t
+				tail=(up-a3)*t
+				ct = up*t
+				sh = w*t
+
+				form2.headexp.value=head.toFixed(3)
+				form2.tailexp.value=tail.toFixed(3)
+				form2.contact.value=ct.toFixed(3)
+				form2.shock.value=sh.toFixed(3)
+				form2.shspeed.value=w.toFixed(3)
+				form2.contspeed.value=up.toFixed(3)
+				
+				//savefile(up,a1,a4,p1,p4,r1,r4,T1,T4,R,g,t,npoints)
+			}
+			
+		</script>
+
+	</head>
+	<body>
+		<form id="inputs">
+		<table>
+		<tr>
+			<td><div align=center>left density (dL)</td>
+			<td><div align=center><input type="text" size=4 name="dL"></td>
+			<td><div align=center>right density (dR)</td>
+			<td><div align=center><input type="text" size=4 name="dR"></td>
+		</tr>
+		<tr>
+			<td><div align=center>left pressure (pL)</td>
+			<td><div align=center><input type="text" size=4 name="pL"></td>
+			<td><div align=center>right pressure (pR)</td>
+			<td><div align=center><input type="text" size=4 name="pR"></td>
+			</tr>
+			<tr>
+			<td><div align=center>gas constant (R)</td>
+			<td><div align=center><input type="text" size=4 name="R"></td>
+			<td><div align=center>gamma (g)</td>
+			<td><div align=center><input type="text" size=4 name="gm"></td>
+			<td><div align=center>final time (t_f)</td>
+			<td><div align=center><input type="text" size=4 name="tf"></td>
+				
+		</tr>		
+		</table>
+	</form>
+
+	<form id="outputs">
+	<table>
+		<tr>
+			<td><div align=center>Expansion wave (head)</td>
+			<td><div align=center><input type="text" size=4 name="headexp"></td>
+		</tr>
+		<tr>
+			<td><div align=center>Expansion wave (tail)</td>
+			<td><div align=center><input type="text" size=4 name="tailexp"></td>
+		</tr>
+		<tr>
+			<td><div align=center>Contact discontinuity</td>
+			<td><div align=center><input type="text" size=4 name="contact"></td>
+		</tr>
+		<tr>
+			<td><div align=center>shock wave</td>
+			<td><div align=center><input type="text" size=4 name="shock"></td>
+			</tr>
+		<tr>
+			<td><div align=center>shock speed</td>
+			<td><div align=center><input type="text" size=4 name="shspeed"></td>
+			</tr>
+		<tr>
+			<td><div align=center>Contact speed</td>
+			<td><div align=center><input type="text" size=4 name="contspeed"></td>
+			</tr>
+	</table>
+
+	<button type="button" onclick="calcsoln(document.getElementById('inputs'),document.getElementById('outputs'))">
+		compute position of waves</button>
+	
+	<button type="button" onclick="savefile(document.getElementById('inputs'),document.getElementById('outputs'))">
+		save solution file</button>
+
+	</body>
+</html>

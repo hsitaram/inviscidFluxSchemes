@@ -1,0 +1,32 @@
+&allinputs
+    npts_grid   = 100
+    pL          = 1.d0
+    rL          = 1.d0 
+    vL          = 0.d0
+    pR          = 0.1d0
+    rR          = 0.125d0
+    vR          = 0.d0
+    gama        = 1.4d0
+    final_time  = 0.1d0
+    cfl         = 0.2d0
+    secondorderflux = 0
+    secondordertime = 1
+    scheme_num  = 1
+    limiter_num = 2
+/
+
+
+#scheme_num and limiter_num in the 
+#inputs represent these
+#=======================================
+
+#LAXF_SCHEME = 1
+#AUSM_SCHEME = 2
+#AUSM_PLUS_SCHEME = 3
+#AUSM_P_UP_SCHEME = 4
+#ECUSP_SCHEME = 5
+#HCUSP_SCHEME = 6
+
+#MINMOD_LIMITER = 1
+#VAN_ALBADA_LIMITER = 2
+#=======================================

@@ -4,6 +4,7 @@ The test runs the 1D Sod shock tube with different schemes
 1) Lax-Friedrichs scheme
 2) AUSM, AUSM-plus, AUSM-plus-up by Liou
 3) E-CUSP and H-CUSP by Jameson
+4) HLL schemes (Harten, Lax, Van Leer)
 
 # To compile
 go to "bld" folder and type make

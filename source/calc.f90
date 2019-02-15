@@ -3,6 +3,7 @@ module calc
   use fluxschemes
   use ausm_schemes
   use cusp_schemes
+  use hll_schemes
   use flux_utils
   use constants
   use inputdata
@@ -82,12 +83,14 @@ contains
 
         else if(scheme_num .eq. HCUSP_SCHEME) then
            call hcusp(cvarL,cvarR,gama,flux)
+        
+       else if(scheme_num .eq. HLL_SCHEME) then
+           call hll(cvarL,cvarR,gama,flux)
 
         else
            print *,"scheme not implemented yet"
            stop
         endif
-       !call cusp(cvarL,cvarR,gama,flux)
 
         invfluxresidual(i-1,:) = invfluxresidual(i-1, :) + flux(:)
         invfluxresidual(i,  :) = invfluxresidual(i,   :) - flux(:)

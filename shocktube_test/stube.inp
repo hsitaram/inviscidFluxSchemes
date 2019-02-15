@@ -1,5 +1,5 @@
 &allinputs
-    npts_grid   = 100
+    npts_grid   = 200
     pL          = 1.d0
     rL          = 1.d0 
     vL          = 0.d0
@@ -9,9 +9,9 @@
     gama        = 1.4d0
     final_time  = 0.1d0
     cfl         = 0.2d0
-    secondorderflux = 0
+    secondorderflux = 1
     secondordertime = 1
-    scheme_num  = 1
+    scheme_num  = 7
     limiter_num = 2
 /
 
@@ -26,6 +26,7 @@
 #AUSM_P_UP_SCHEME = 4
 #ECUSP_SCHEME = 5
 #HCUSP_SCHEME = 6
+#HLL_SCHEME = 7
 
 #MINMOD_LIMITER = 1
 #VAN_ALBADA_LIMITER = 2

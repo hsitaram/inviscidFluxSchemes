@@ -19,6 +19,7 @@ module constants
     integer, parameter :: AUSM_P_UP_SCHEME = 4
     integer, parameter :: ECUSP_SCHEME = 5
     integer, parameter :: HCUSP_SCHEME = 6
+    integer, parameter :: HLL_SCHEME = 7
 
     integer, parameter :: MINMOD_LIMITER = 1
     integer, parameter :: VAN_ALBADA_LIMITER = 2

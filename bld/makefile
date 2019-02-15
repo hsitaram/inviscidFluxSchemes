@@ -1,6 +1,6 @@
 SOURCEDIR = ../source
 OBJFILES = ${SOURCEDIR}/constants.o ${SOURCEDIR}/inputdata.o ${SOURCEDIR}/limiters.o ${SOURCEDIR}/flux_utils.o ${SOURCEDIR}/fluxschemes.o\
-	   ${SOURCEDIR}/ausm_schemes.o ${SOURCEDIR}/cusp_schemes.o   	${SOURCEDIR}/vars.o ${SOURCEDIR}/calc.o ${SOURCEDIR}/io.o
+	   ${SOURCEDIR}/ausm_schemes.o ${SOURCEDIR}/cusp_schemes.o  ${SOURCEDIR}/hll_schemes.o  ${SOURCEDIR}/vars.o ${SOURCEDIR}/calc.o ${SOURCEDIR}/io.o
 
 FORT=gfortran
 
